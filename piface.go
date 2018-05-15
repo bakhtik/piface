@@ -21,24 +21,20 @@ func main() {
 		return
 	}
 
-	buzz := pfd.OutputPins[2]
+	// buzz := pfd.OutputPins[2]
 	green := pfd.OutputPins[3]
 	red := pfd.OutputPins[4]
 	// blink(green, red)
 	for {
 		if pfd.Switches[0].Value() != 0 {
 			green.AllOff()
-			buzz.AllOff()
 		} else {
 			green.AllOn()
-			buzz.AllOn()
 		}
 		if pfd.Switches[1].Value() != 0 {
 			red.AllOff()
-			buzz.AllOff()
 		} else {
 			red.AllOn()
-			buzz.AllOn()
 		}
 	}
 }
