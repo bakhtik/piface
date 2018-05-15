@@ -44,7 +44,7 @@ func readCard(pfd *piface.PiFaceDigital, firstDigit int) {
 	u, t := time.Now(), time.Now()
 	for t.Sub(u) < time.Millisecond*50 {
 		u = t
-		time.Sleep(time.Millisecond)
+		time.Sleep(time.Microsecond * 50)
 		switch {
 		case pfd.InputPins[0].Value() == 1:
 			cardNumber += "0"
