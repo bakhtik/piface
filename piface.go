@@ -20,7 +20,8 @@ func main() {
 		return
 	}
 
-	buzz, green, red := pfd.OutputPins[2], pfd.OutputPins[3], pfd.OutputPins[4]
+	// buzz := pfd.OutputPins[2]
+	green, red := pfd.OutputPins[3], pfd.OutputPins[4]
 
 	// blink time!!
 	fmt.Println("Bilnking HID reader")
@@ -29,9 +30,7 @@ func main() {
 		time.Sleep(time.Second)
 		green.Toggle()
 		red.Toggle()
-		buzz.Toggle()
 		time.Sleep(time.Second)
 		red.Toggle()
-		buzz.Toggle()
 	}
 }
