@@ -43,8 +43,8 @@ func readCard(pfd *piface.PiFaceDigital, firstDigit int) {
 	cardNumber := strconv.Itoa(firstDigit)
 	u, t := time.Now(), time.Now()
 	for t.Sub(u) < time.Millisecond*50 {
-		time.Sleep(time.Millisecond)
 		u = t
+		time.Sleep(time.Millisecond)
 		switch {
 		case pfd.InputPins[0].Value() == 1:
 			cardNumber += "0"
