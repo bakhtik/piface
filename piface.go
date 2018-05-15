@@ -56,6 +56,7 @@ func readCard(pfd *piface.PiFaceDigital, firstDigit int) {
 	}
 	fmt.Println(cardNumber)
 	fmt.Println()
+	time.Sleep(time.Millisecond * 100)
 }
 
 func blink(green, red *MCP23S17.MCP23S17RegisterBit) {
