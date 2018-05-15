@@ -21,9 +21,11 @@ func main() {
 	}
 
 	// blink time!!
-	fmt.Println("Blinking led 5 each second")
+	fmt.Println("Bilnking HID reader")
 	for {
-		pfd.Leds[5].Toggle()
+		// pfd.Leds[5].Toggle()
+		pfd.OutputPins[0].Toggle()
+		pfd.OutputPins[2].Toggle()
 		time.Sleep(time.Second)
 	}
 }
