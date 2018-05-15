@@ -30,9 +30,9 @@ func main() {
 
 	for {
 		switch {
-		case zero.Value() != 1:
+		case zero.Value() != 0:
 			readCard(pfd, 0)
-		case one.Value() != 1:
+		case one.Value() != 0:
 			readCard(pfd, 1)
 		}
 	}
@@ -44,9 +44,9 @@ func readCard(pfd *piface.PiFaceDigital, firstDigit int) {
 	for i := 0; i < 35; i++ {
 		time.Sleep(time.Microsecond * 50)
 		switch {
-		case pfd.InputPins[0].Value() != 1:
+		case pfd.InputPins[0].Value() != 0:
 			cardNumber += "0"
-		case pfd.InputPins[1].Value() != 1:
+		case pfd.InputPins[1].Value() != 0:
 			cardNumber += "1"
 		}
 	}
