@@ -27,14 +27,14 @@ func main() {
 	// blink(green, red)
 	for {
 		if pfd.Switches[0].Value() != 0 {
-			green.AllOn()
-		} else {
 			green.AllOff()
+		} else {
+			green.AllOn()
 		}
 		if pfd.Switches[1].Value() != 0 {
-			red.AllOn()
-		} else {
 			red.AllOff()
+		} else {
+			red.AllOn()
 		}
 	}
 }
