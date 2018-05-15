@@ -24,7 +24,7 @@ func main() {
 	fmt.Println("Bilnking HID reader")
 	for {
 		// pfd.Leds[5].Toggle()
-		pfd.OutputPins[0].Toggle()
+		pfd.OutputPins[1].Toggle()
 		pfd.OutputPins[2].Toggle()
 		time.Sleep(time.Second)
 	}
