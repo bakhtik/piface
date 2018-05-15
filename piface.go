@@ -23,7 +23,7 @@ func main() {
 	// blink time!!
 	fmt.Println("Blinking led 7 each second")
 	for {
-		pfd.Leds[7].Toggle()
+		pfd.Leds[5].Toggle()
 		time.Sleep(time.Second)
 	}
 }
