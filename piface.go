@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/luismesas/goPi/MCP23S17"
 	"github.com/luismesas/goPi/piface"
 	"github.com/luismesas/goPi/spi"
 )
@@ -21,8 +22,24 @@ func main() {
 	}
 
 	// buzz := pfd.OutputPins[2]
-	green, red := pfd.OutputPins[3], pfd.OutputPins[4]
+	green := pfd.OutputPins[3]
+	red := pfd.OutputPins[4]
+	// blink(green, red)
+	for {
+		if pfd.Switches[0].Value() != 0 {
+			green.AllOn()
+		} else {
+			green.AllOff()
+		}
+		if pfd.Switches[1].Value() != 0 {
+			red.AllOn()
+		} else {
+			red.AllOff()
+		}
+	}
+}
 
+func blink(green, red *MCP23S17.MCP23S17RegisterBit) {
 	// blink time!!
 	fmt.Println("Bilnking HID reader")
 	for {
