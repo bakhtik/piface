@@ -42,7 +42,7 @@ func main() {
 func readCard(pfd *piface.PiFaceDigital, firstDigit int) {
 	cardNumber := strconv.Itoa(firstDigit)
 	u, t := time.Now(), time.Now()
-	for t.Sub(u) < time.Millisecond*5 {
+	for t.Sub(u) < time.Millisecond*50 {
 		u = t
 		switch {
 		case pfd.InputPins[0].Value() == 1:
