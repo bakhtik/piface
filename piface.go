@@ -30,9 +30,9 @@ func main() {
 
 	for {
 		switch {
-		case zero.Value() != 0:
+		case zero.Value() == 1:
 			readCard(pfd, 0)
-		case one.Value() != 0:
+		case one.Value() == 1:
 			readCard(pfd, 1)
 		}
 	}
@@ -41,13 +41,16 @@ func main() {
 
 func readCard(pfd *piface.PiFaceDigital, firstDigit int) {
 	cardNumber := strconv.Itoa(firstDigit)
-	for i := 0; i < 35; i++ {
-		time.Sleep(time.Microsecond * 50)
+	u, t := time.Now(), time.Now()
+	for t.Sub(u) < time.Millisecond*5 {
+		u = t
 		switch {
-		case pfd.InputPins[0].Value() != 0:
+		case pfd.InputPins[0].Value() == 1:
 			cardNumber += "0"
-		case pfd.InputPins[1].Value() != 0:
+			t = time.Now()
+		case pfd.InputPins[1].Value() == 1:
 			cardNumber += "1"
+			t = time.Now()
 		}
 	}
 	fmt.Println()
