@@ -32,5 +32,6 @@ func main() {
 		red.Toggle()
 		time.Sleep(time.Second)
 		red.Toggle()
+		time.Sleep(time.Second)
 	}
 }
