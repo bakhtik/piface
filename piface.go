@@ -108,19 +108,18 @@ func main() {
 
 	count := 0
 	t := time.Now()
-	var prevD0, curD0, prevD1, curD1 byte
 	for {
-		curD0, curD1 = reader.D0.Value(), reader.D1.Value()
-		if prevD0 == 0 && curD0 == 1 {
-			count++
+		if reader.D0.Value() == 1 {
 			t = time.Now()
-		}
-		if prevD1 == 0 && curD1 == 1 {
 			count++
-			t = time.Now()
+			time.Sleep(time.Microsecond * 50)
 		}
-		prevD0, prevD1 = curD0, curD1
-		if count > 0 && time.Now().Sub(t) > time.Millisecond*100 {
+		if reader.D1.Value() == 1 {
+			t = time.Now()
+			count++
+			time.Sleep(time.Microsecond * 50)
+		}
+		if count > 0 && time.Now().Sub(t) > time.Millisecond*500 {
 			fmt.Println(count)
 			count = 0
 		}
