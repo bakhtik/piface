@@ -48,7 +48,7 @@ func init() {
 
 func main() {
 	go SwitchFunc(0, reader.Green, reader.Buzz)()
-	go SwitchFunc(1, reader.Green, reader.Buzz)()
+	go SwitchFunc(1, reader.Red, reader.Buzz)()
 
 	select {}
 }
