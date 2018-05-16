@@ -87,6 +87,7 @@ func main() {
 			}
 			if zeroes > 0 && time.Now().Sub(t) > packetGap {
 				zch <- zeroes
+				zeroes = 0
 			}
 		}
 	}()
@@ -100,6 +101,7 @@ func main() {
 			}
 			if ones > 0 && time.Now().Sub(t) > packetGap {
 				och <- ones
+				ones = 0
 			}
 		}
 	}()
