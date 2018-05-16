@@ -42,8 +42,8 @@ func init() {
 		Buzz:  pfd.OutputPins[2],
 		Green: pfd.OutputPins[3],
 		Red:   pfd.OutputPins[4],
-		D0:    pfd.InputPins[0],
-		D1:    pfd.InputPins[1],
+		D0:    pfd.InputPins[4],
+		D1:    pfd.InputPins[5],
 	}
 }
 
@@ -112,7 +112,7 @@ func main() {
 		if reader.D0.Value() == 1 || reader.D1.Value() == 1 {
 			t = time.Now()
 			count++
-			// time.Sleep(time.Microsecond * 100)
+			time.Sleep(time.Microsecond * 50)
 		}
 		if count > 0 && time.Now().Sub(t) > time.Millisecond*500 {
 			fmt.Println(count)
