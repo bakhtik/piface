@@ -120,6 +120,7 @@ func main() {
 		}
 		if count > 34 {
 			fmt.Println(number)
+			count = 0
 		}
 		// if count > 0 && time.Now().Sub(t) > time.Millisecond*500 {
 		// 	fmt.Println(count)
