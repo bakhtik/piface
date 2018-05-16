@@ -27,7 +27,7 @@ var (
 	reader Reader
 )
 
-const packetGap = time.Second * 5
+const packetGap = time.Second
 
 func init() {
 	// creates a new pifacedigital instance
@@ -63,6 +63,7 @@ func main() {
 		default:
 			if time.Now().Sub(t) > packetGap {
 				fmt.Println()
+				t = time.Now()
 			}
 		}
 
