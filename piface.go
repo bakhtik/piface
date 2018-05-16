@@ -75,26 +75,30 @@ func main() {
 func ReadD0(card *Card, event chan<- struct{}) {
 	var prev, cur byte
 	for {
-		if cur = reader.D0.Value(); prev < cur {
+		cur = reader.D0.Value()
+		if prev < cur {
 			card.mu.Lock()
 			card.Number = card.Number << 1
 			card.count++
 			card.mu.Unlock()
 			event <- struct{}{}
 		}
+		prev = cur
 	}
 }
 
 func ReadD1(card *Card, event chan<- struct{}) {
 	var prev, cur byte
 	for {
-		if cur = reader.D1.Value(); prev < cur {
+		cur = reader.D1.Value()
+		if prev < cur {
 			card.mu.Lock()
 			card.Number = card.Number<<1 | 1
 			card.count++
 			card.mu.Unlock()
 			event <- struct{}{}
 		}
+		prev = cur
 	}
 }
 
