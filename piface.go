@@ -66,9 +66,12 @@ func main() {
 			if count > 0 && time.Now().Sub(t) > packetGap {
 				for digit := range readerCh {
 					fmt.Print(digit)
+					count--
+					if count == 0 {
+						break
+					}
 				}
 				fmt.Println()
-				count = 0
 			}
 		}
 
