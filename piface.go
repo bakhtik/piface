@@ -32,7 +32,7 @@ func main() {
 	// zero := pfd.InputPins[0]
 	// one := pfd.InputPins[1]
 
-	reader, cardCh := make(chan int, 35), make(chan int)
+	reader, cardCh := make(chan int), make(chan int)
 	go ReadD0(reader)
 	go ReadD1(reader)
 	// go Read(reader1)
