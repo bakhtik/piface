@@ -40,7 +40,7 @@ func main() {
 	for {
 		card = card<<1 | <-reader1
 		count++
-		if count == 35 {
+		if count == 34 {
 			cardCh <- card
 			count = 0
 		}
