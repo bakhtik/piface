@@ -9,88 +9,86 @@ import (
 	"github.com/luismesas/goPi/spi"
 )
 
-var pfd *piface.PiFaceDigital
+type Reader struct {
+	Buzz  *MCP23S17.MCP23S17RegisterBit
+	Green *MCP23S17.MCP23S17RegisterBit
+	Red   *MCP23S17.MCP23S17RegisterBit
+	D0    *MCP23S17.MCP23S17RegisterBitNeg
+	D1    *MCP23S17.MCP23S17RegisterBitNeg
+}
 
-const packetGap = time.Millisecond * 250
+type Card struct {
+	Number int64
+	Count  int
+}
+
+var (
+	pfd    *piface.PiFaceDigital
+	reader Reader
+)
+
+const packetGap = time.Second
 
 func init() {
 	// creates a new pifacedigital instance
 	pfd = piface.NewPiFaceDigital(spi.DEFAULT_HARDWARE_ADDR, spi.DEFAULT_BUS, spi.DEFAULT_CHIP)
-}
-
-func main() {
 	// initializes pifacedigital board
 	err := pfd.InitBoard()
 	if err != nil {
 		fmt.Printf("Error on init board: %s", err)
 		return
 	}
+	reader = Reader{
+		Buzz:  pfd.OutputPins[2],
+		Green: pfd.OutputPins[3],
+		Red:   pfd.OutputPins[4],
+		D0:    pfd.InputPins[0],
+		D1:    pfd.InputPins[1],
+	}
+}
 
-	// buzz := pfd.OutputPins[2]
-	// green := pfd.OutputPins[3]
-	// red := pfd.OutputPins[4]
-	// zero := pfd.InputPins[0]
-	// one := pfd.InputPins[1]
-
-	cardCh := make(chan int)
+func main() {
+	// card := Card{}
+	readerCh := make(chan int)
+	cardCh := make(chan Card)
 	go reportCard(cardCh)
-	card, count := 0, 0
+	go ReadD0(readerCh)
+	go ReadD1(readerCh)
 	t := time.Now()
-	D0 := pfd.InputPins[0]
-	D1 := pfd.InputPins[1]
 	for {
-		if D0.Value() == 1 {
-			card = card<<1 | 0
+		select {
+		case digit := <-readerCh:
 			t = time.Now()
-			count++
+			fmt.Print(digit)
+		default:
+			if time.Now().Sub(t) > packetGap {
+				fmt.Println()
+			}
 		}
-		if D1.Value() == 1 {
-			card = card<<1 | 1
-			t = time.Now()
-			count++
-		}
-		if count > 0 && time.Now().Sub(t) > packetGap {
-			cardCh <- card
-			card, count = 0, 0
+
+	}
+}
+
+func ReadD0(readerCh chan int) {
+	for {
+		if reader.D0.Value() == 1 {
+			readerCh <- 0
 		}
 	}
 }
 
-// func Read(reader chan int) {
-// 	D0 := pfd.InputPins[0]
-// 	D1 := pfd.InputPins[1]
-// 	for {
-// 		if D0.Value() == 1 {
-// 			reader <- 0
-// 		}
-// 		if D1.Value() == 1 {
-// 			reader <- 1
-// 		}
-// 	}
-// }
-
-func ReadD0(reader chan int) {
-	D0 := pfd.InputPins[0]
+func ReadD1(readerCh chan int) {
 	for {
-		if D0.Value() == 1 {
-			reader <- 0
+		if reader.D1.Value() == 1 {
+			readerCh <- 1
 		}
 	}
 }
 
-func ReadD1(reader chan int) {
-	D1 := pfd.InputPins[1]
+func reportCard(cardCh chan Card) {
 	for {
-		if D1.Value() == 1 {
-			reader <- 1
-		}
-	}
-}
-
-func reportCard(card chan int) {
-	for {
-		fmt.Printf("%b, %[1]x\n", <-card)
-		blinkGreen()
+		card := <-cardCh
+		fmt.Printf("%b, %[1]x\n", card.Number)
 	}
 }
 
@@ -100,26 +98,6 @@ func blinkGreen() {
 	time.Sleep(time.Millisecond * 500)
 	green.Toggle()
 }
-
-// func readCard(pfd *piface.PiFaceDigital, firstDigit int) {
-// 	cardNumber := strconv.Itoa(firstDigit)
-// 	u, t := time.Now(), time.Now()
-// 	for t.Sub(u) < time.Millisecond*50 {
-// 		u = t
-// 		time.Sleep(time.Microsecond * 10)
-// 		switch {
-// 		case pfd.InputPins[0].Value() == 1:
-// 			cardNumber += "0"
-// 			t = time.Now()
-// 		case pfd.InputPins[1].Value() == 1:
-// 			cardNumber += "1"
-// 			t = time.Now()
-// 		}
-// 	}
-// 	fmt.Println(cardNumber)
-// 	fmt.Println()
-// 	time.Sleep(time.Millisecond * 100)
-// }
 
 func blink(green, red *MCP23S17.MCP23S17RegisterBit) {
 	// blink time!!
