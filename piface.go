@@ -30,14 +30,18 @@ func main() {
 	// zero := pfd.InputPins[0]
 	// one := pfd.InputPins[1]
 
-	reader1, cardCh := make(chan int), make(chan int)
+	reader1, cardCh := make(chan int, 35), make(chan int)
 	go ReadD0(reader1)
 	go ReadD1(reader1)
+	// go Read(reader1)
 	go reportCard(cardCh)
 	// card, count := 0, 0
 	// t := time.Now()
 	for {
 		fmt.Print(<-reader1)
+		// card = card<<1 | <-reader1
+		// count++
+
 		// digit := <-reader1
 		// if count > 0 && time.Now().Sub(t) > time.Second {
 		// 	cardCh <- card
@@ -48,6 +52,19 @@ func main() {
 		// card = card<<1 | digit
 	}
 }
+
+// func Read(reader chan int) {
+// 	D0 := pfd.InputPins[0]
+// 	D1 := pfd.InputPins[1]
+// 	for {
+// 		if D0.Value() == 1 {
+// 			reader <- 0
+// 		}
+// 		if D1.Value() == 1 {
+// 			reader <- 1
+// 		}
+// 	}
+// }
 
 func ReadD0(reader chan int) {
 	D0 := pfd.InputPins[0]
