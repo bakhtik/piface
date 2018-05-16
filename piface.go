@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/luismesas/goPi/MCP23S17"
@@ -18,18 +17,12 @@ type Reader struct {
 	D1    *MCP23S17.MCP23S17RegisterBitNeg
 }
 
-type Card struct {
-	Number int64
-	mu     sync.Mutex
-	count  int
-}
-
 var (
 	pfd    *piface.PiFaceDigital
 	reader Reader
 )
 
-const packetGap = time.Millisecond * 200
+const packetGap = time.Millisecond * 500
 
 func init() {
 	// creates a new pifacedigital instance
@@ -50,99 +43,17 @@ func init() {
 }
 
 func main() {
-	event := make(chan struct{})
-	card := &Card{}
-	go ReadD0(card, event)
-	go ReadD1(card, event)
-
-	t := time.Now()
-	for {
-		select {
-		case <-event:
-			t = time.Now()
-		default:
-			if time.Now().Sub(t) > packetGap {
-				card.mu.Lock()
-				if card.count > 0 {
-					fmt.Printf("%b, %[1]x, (%d)\n", card.Number, card.count)
-					card.Number = 0
-					card.count = 0
-				}
-				card.mu.Unlock()
-			}
-		}
-	}
+	go switch1()
+	select {}
 }
 
-func ReadD0(card *Card, event chan<- struct{}) {
+func switch1() {
 	var prev, cur byte
 	for {
-		cur = reader.D0.Value()
-		if prev < cur {
-			card.mu.Lock()
-			card.Number = card.Number << 1
-			card.count++
-			card.mu.Unlock()
-			event <- struct{}{}
+		cur = pfd.Switches[0].Value()
+		if prev != cur {
+			reader.Buzz.Toggle()
 		}
 		prev = cur
-	}
-}
-
-func ReadD1(card *Card, event chan<- struct{}) {
-	var prev, cur byte
-	for {
-		cur = reader.D1.Value()
-		if prev < cur {
-			card.mu.Lock()
-			card.Number = card.Number<<1 | 1
-			card.count++
-			card.mu.Unlock()
-			event <- struct{}{}
-		}
-		prev = cur
-	}
-}
-
-func reportCard(cardCh chan Card) {
-	for {
-		card := <-cardCh
-		fmt.Printf("%b, %[1]x\n", card.Number)
-	}
-}
-
-func blinkGreen() {
-	green := pfd.OutputPins[3]
-	green.Toggle()
-	time.Sleep(time.Millisecond * 500)
-	green.Toggle()
-}
-
-func blink(green, red *MCP23S17.MCP23S17RegisterBit) {
-	// blink time!!
-	fmt.Println("Bilnking HID reader")
-	for {
-		green.Toggle()
-		time.Sleep(time.Second)
-		green.Toggle()
-		red.Toggle()
-		time.Sleep(time.Second)
-		red.Toggle()
-		time.Sleep(time.Second)
-	}
-}
-
-func switchLeds(pfd *piface.PiFaceDigital) {
-	for {
-		if pfd.Switches[0].Value() != 0 {
-			pfd.OutputPins[3].AllOff()
-		} else {
-			pfd.OutputPins[3].AllOn()
-		}
-		if pfd.Switches[1].Value() != 0 {
-			pfd.OutputPins[4].AllOff()
-		} else {
-			pfd.OutputPins[4].AllOn()
-		}
 	}
 }
