@@ -50,7 +50,7 @@ func main() {
 	go SwitchFunc(0, reader.Green, reader.Buzz)()
 	go SwitchFunc(1, reader.Red, reader.Buzz)()
 
-	count := 0
+	// count := 0
 	var number int64
 	for t := time.Now(); time.Now().Sub(t) <= time.Second; {
 		reader.D0.Value()
