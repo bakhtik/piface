@@ -109,15 +109,10 @@ func main() {
 	count := 0
 	t := time.Now()
 	for {
-		if reader.D0.Value() == 1 {
+		if reader.D0.Value() == 1 || reader.D1.Value() == 1 {
 			t = time.Now()
 			count++
-			time.Sleep(time.Microsecond * 50)
-		}
-		if reader.D1.Value() == 1 {
-			t = time.Now()
-			count++
-			time.Sleep(time.Microsecond * 50)
+			// time.Sleep(time.Microsecond * 100)
 		}
 		if count > 0 && time.Now().Sub(t) > time.Millisecond*500 {
 			fmt.Println(count)
