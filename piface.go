@@ -32,34 +32,27 @@ func main() {
 	// zero := pfd.InputPins[0]
 	// one := pfd.InputPins[1]
 
-	reader, cardCh := make(chan int), make(chan int)
-	go ReadD0(reader)
-	go ReadD1(reader)
-	// go Read(reader1)
+	cardCh := make(chan int)
 	go reportCard(cardCh)
-	card, count, digit := 0, 0, 0
+	card, count := 0, 0
 	t := time.Now()
+	D0 := pfd.InputPins[0]
+	D1 := pfd.InputPins[1]
 	for {
-		select {
-		case digit = <-reader:
+		if D0.Value() == 1 {
+			card = card<<1 | 0
 			t = time.Now()
-			card = card<<1 | digit
 			count++
-		default:
-			if count > 0 && time.Now().Sub(t) > packetGap {
-				cardCh <- card
-				card, count = 0, 0
-			}
 		}
-
-		// digit := <-reader1
-		// if count > 0 && time.Now().Sub(t) > time.Second {
-		// 	cardCh <- card
-		// 	card, count = 0, 0
-		// }
-		// t = time.Now()
-		// count++
-		// cad = card<<1 | digit
+		if D1.Value() == 1 {
+			card = card<<1 | 1
+			t = time.Now()
+			count++
+		}
+		if count > 0 && time.Now().Sub(t) > packetGap {
+			cardCh <- card
+			card, count = 0, 0
+		}
 	}
 }
 
