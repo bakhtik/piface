@@ -111,10 +111,12 @@ func main() {
 	// t := time.Now()
 	for {
 		if reader.D0.Value() == 1 {
+			time.Sleep(time.Microsecond * 50)
 			number = number<<1 | 0
 			count++
 		}
 		if reader.D1.Value() == 1 {
+			time.Sleep(time.Microsecond * 50)
 			number = number<<1 | 1
 			count++
 		}
