@@ -54,6 +54,7 @@ func main() {
 	for t := time.Now(); time.Now().Sub(t) <= time.Microsecond*50; {
 		reader.D0.Value()
 		reader.D1.Value()
+		count++
 	}
 	fmt.Printf("%d\n", count)
 
