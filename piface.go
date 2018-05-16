@@ -48,106 +48,31 @@ func init() {
 }
 
 func main() {
-	// card := Card{}
-	// readerCh := make(chan int, 35)
-	// event := make(chan struct{})
-	// // cardCh := make(chan Card)
-	// // go reportCard(cardCh)
-	// go ReadD0(readerCh, event)
-	// go ReadD1(readerCh, event)
-	// t := time.Now()
-	// count := 0
-	// for {
-	// 	select {
-	// 	case <-event:
-	// 		count++
-	// 		t = time.Now()
-	// 	default:
-	// 		if count > 0 && time.Now().Sub(t) > packetGap {
-	// 			for digit := range readerCh {
-	// 				fmt.Print(digit)
-	// 				count--
-	// 				if count == 0 {
-	// 					break
-	// 				}
-	// 			}
-	// 			fmt.Println()
-	// 		}
-	// 	}
-
-	// }
-	// zch, och := make(chan int), make(chan int)
-	// go func() {
-	// 	var t time.Time
-	// 	zeroes := 0
-	// 	for {
-	// 		if reader.D0.Value() == 1 {
-	// 			t = time.Now()
-	// 			zeroes++
-	// 		}
-	// 		if zeroes > 0 && time.Now().Sub(t) > packetGap {
-	// 			zch <- zeroes
-	// 			zeroes = 0
-	// 		}
-	// 	}
-	// }()
-	// go func() {
-	// 	var t time.Time
-	// 	ones := 0
-	// 	for {
-	// 		if reader.D1.Value() == 1 {
-	// 			t = time.Now()
-	// 			ones++
-	// 		}
-	// 		if ones > 0 && time.Now().Sub(t) > packetGap {
-	// 			och <- ones
-	// 			ones = 0
-	// 		}
-	// 	}
-	// }()
-
-	count := 0
-	var number int64
-	// t := time.Now()
-	for {
-		if reader.D0.Value() == 1 {
-			time.Sleep(time.Microsecond * 50)
-			number = number<<1 | 0
-			count++
-		}
-		if reader.D1.Value() == 1 {
-			time.Sleep(time.Microsecond * 50)
-			number = number<<1 | 1
-			count++
-		}
-		if count > 34 {
-			fmt.Printf("%b, %[1]x\n", number)
-			count = 0
-		}
-		// if count > 0 && time.Now().Sub(t) > time.Millisecond*500 {
-		// 	fmt.Println(count)
-		// 	count = 0
-		// }
-	}
-
-}
-
-func ReadD0(readerCh chan int, event chan struct{}) {
-	for {
-		if reader.D0.Value() == 1 {
-			readerCh <- 0
-			event <- struct{}{}
-
-		}
+	digit := make(chan byte, 35)
+	go ReadD0(digit)
+	go ReadD1(digit)
+	for d := range digit {
+		fmt.Print(d)
 	}
 }
 
-func ReadD1(readerCh chan int, event chan struct{}) {
+func ReadD0(digit chan<- byte) {
+	var prev, cur byte
 	for {
-		if reader.D1.Value() == 1 {
-			readerCh <- 1
-			event <- struct{}{}
+		if cur = reader.D0.Value(); prev < cur {
+			digit <- 0
 		}
+		prev = cur
+	}
+}
+
+func ReadD1(digit chan<- byte) {
+	var prev, cur byte
+	for {
+		if cur = reader.D0.Value(); prev < cur {
+			digit <- 0
+		}
+		prev = cur
 	}
 }
 
