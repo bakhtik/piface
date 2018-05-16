@@ -51,9 +51,10 @@ func main() {
 	go SwitchFunc(1, reader.Red, reader.Buzz)()
 
 	count := 0
+	var number int64
 	for t := time.Now(); time.Now().Sub(t) <= time.Second; {
-		// reader.D0.Value()
-		count++
+		reader.D0.Value()
+		number = number<<1 | 1
 	}
 	fmt.Printf("%d Hz\n", count)
 
