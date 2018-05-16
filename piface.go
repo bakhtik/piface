@@ -95,7 +95,7 @@ func main() {
 		var t time.Time
 		ones := 0
 		for {
-			if reader.D0.Value() == 1 {
+			if reader.D1.Value() == 1 {
 				t = time.Now()
 				ones++
 			}
