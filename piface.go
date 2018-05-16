@@ -106,14 +106,20 @@ func main() {
 	// 	}
 	// }()
 
-	// count := 0
+	count := 0
+	var number int64
 	// t := time.Now()
 	for {
 		if reader.D0.Value() == 1 {
-			fmt.Print(0)
+			number = number<<1 | 0
+			count++
 		}
 		if reader.D1.Value() == 1 {
-			fmt.Print(1)
+			number = number<<1 | 1
+			count++
+		}
+		if count > 34 {
+			fmt.Println(number)
 		}
 		// if count > 0 && time.Now().Sub(t) > time.Millisecond*500 {
 		// 	fmt.Println(count)
