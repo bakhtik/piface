@@ -34,17 +34,18 @@ func main() {
 	go ReadD0(reader1)
 	go ReadD1(reader1)
 	go reportCard(cardCh)
-	card, count := 0, 0
-	t := time.Now()
+	// card, count := 0, 0
+	// t := time.Now()
 	for {
-		digit := <-reader1
-		if count > 0 && time.Now().Sub(t) > time.Second {
-			cardCh <- card
-			card, count = 0, 0
-		}
-		t = time.Now()
-		count++
-		card = card<<1 | digit
+		fmt.Print(<-reader1)
+		// digit := <-reader1
+		// if count > 0 && time.Now().Sub(t) > time.Second {
+		// 	cardCh <- card
+		// 	card, count = 0, 0
+		// }
+		// t = time.Now()
+		// count++
+		// card = card<<1 | digit
 	}
 }
 
