@@ -49,10 +49,13 @@ func init() {
 func main() {
 	go SwitchFunc(0, reader.Green, reader.Buzz)()
 	go SwitchFunc(1, reader.Red, reader.Buzz)()
-	for i := 0; i < 8; i++ {
-		fmt.Print(pfd.InputPins[i].Value())
+
+	count := 0
+	for t := time.Now(); time.Now().Sub(t) >= time.Second; {
+		reader.D0.Value()
+		count++
 	}
-	fmt.Println()
+	fmt.Printf("%d Hz\n", count)
 
 	select {}
 }
