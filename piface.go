@@ -11,6 +11,8 @@ import (
 
 var pfd *piface.PiFaceDigital
 
+const packetGap = time.Millisecond * 50
+
 func init() {
 	// creates a new pifacedigital instance
 	pfd = piface.NewPiFaceDigital(spi.DEFAULT_HARDWARE_ADDR, spi.DEFAULT_BUS, spi.DEFAULT_CHIP)
@@ -30,19 +32,24 @@ func main() {
 	// zero := pfd.InputPins[0]
 	// one := pfd.InputPins[1]
 
-	reader1, cardCh := make(chan int), make(chan int)
-	go ReadD0(reader1)
-	go ReadD1(reader1)
+	reader, cardCh := make(chan int, 35), make(chan int)
+	go ReadD0(reader)
+	go ReadD1(reader)
 	// go Read(reader1)
 	go reportCard(cardCh)
-	card, count := 0, 0
-	// t := time.Now()
+	card, count, digit := 0, 0, 0
+	t := time.Now()
 	for {
-		card = card<<1 | <-reader1
-		count++
-		if count == 34 {
-			cardCh <- card
-			count = 0
+		select {
+		case digit = <-reader:
+			t = time.Now()
+			card = card<<1 | digit
+			count++
+		default:
+			if count > 0 && time.Now().Sub(t) > packetGap {
+				cardCh <- card
+				card, count = 0, 0
+			}
 		}
 
 		// digit := <-reader1
