@@ -53,7 +53,6 @@ func main() {
 	count := 0
 	for t := time.Now(); time.Now().Sub(t) <= time.Second; {
 		reader.D0.Value()
-		reader.D1.Value()
 		count++
 	}
 	fmt.Printf("%d Hz\n", count)
