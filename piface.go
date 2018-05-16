@@ -110,6 +110,7 @@ func main() {
 	t := time.Now()
 	for {
 		if reader.D0.Value() == 1 || reader.D1.Value() == 1 {
+			time.Sleep(time.Microsecond * 10)
 			t = time.Now()
 			count++
 		}
