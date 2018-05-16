@@ -27,7 +27,7 @@ var (
 	reader Reader
 )
 
-const packetGap = time.Millisecond * 50
+const packetGap = time.Millisecond * 200
 
 func init() {
 	// creates a new pifacedigital instance
