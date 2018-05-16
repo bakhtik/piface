@@ -49,33 +49,67 @@ func init() {
 
 func main() {
 	// card := Card{}
-	readerCh := make(chan int, 35)
-	event := make(chan struct{})
-	// cardCh := make(chan Card)
-	// go reportCard(cardCh)
-	go ReadD0(readerCh, event)
-	go ReadD1(readerCh, event)
-	t := time.Now()
-	count := 0
-	for {
-		select {
-		case <-event:
-			count++
-			t = time.Now()
-		default:
-			if count > 0 && time.Now().Sub(t) > packetGap {
-				for digit := range readerCh {
-					fmt.Print(digit)
-					count--
-					if count == 0 {
-						break
-					}
-				}
-				fmt.Println()
+	// readerCh := make(chan int, 35)
+	// event := make(chan struct{})
+	// // cardCh := make(chan Card)
+	// // go reportCard(cardCh)
+	// go ReadD0(readerCh, event)
+	// go ReadD1(readerCh, event)
+	// t := time.Now()
+	// count := 0
+	// for {
+	// 	select {
+	// 	case <-event:
+	// 		count++
+	// 		t = time.Now()
+	// 	default:
+	// 		if count > 0 && time.Now().Sub(t) > packetGap {
+	// 			for digit := range readerCh {
+	// 				fmt.Print(digit)
+	// 				count--
+	// 				if count == 0 {
+	// 					break
+	// 				}
+	// 			}
+	// 			fmt.Println()
+	// 		}
+	// 	}
+
+	// }
+	zch, och := make(chan int)
+	go func() {
+		var t time.Time
+		zeroes := 0
+		for {
+			if reader.D0.Value() == 1 {
+				t = time.Now()
+				zeroes++
+			}
+			if zeroes > 0 && time.Now().Sub(t) > packetGap {
+				zch <- zeroes
 			}
 		}
+	}()
+	go func() {
+		var t time.Time
+		ones := 0
+		for {
+			if reader.D0.Value() == 1 {
+				t = time.Now()
+				ones++
+			}
+			if ones > 0 && time.Now().Sub(t) > packetGap {
+				och <- ones
+			}
+		}
+	}()
 
+	for {
+		zeros := <-zch
+		ones := <-och
+		fmt.Printf("0: %d, 1: %d")
 	}
+
 }
 
 func ReadD0(readerCh chan int, event chan struct{}) {
