@@ -51,7 +51,7 @@ func main() {
 	go SwitchFunc(1, reader.Red, reader.Buzz)()
 
 	count := 0
-	for t := time.Now(); time.Now().Sub(t) <= time.Microsecond*50; {
+	for t := time.Now(); time.Now().Sub(t) <= time.Microsecond*100; {
 		reader.D0.Value()
 		reader.D1.Value()
 		count++
