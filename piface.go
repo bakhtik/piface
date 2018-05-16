@@ -76,7 +76,7 @@ func main() {
 	// 	}
 
 	// }
-	zch, och := make(chan int)
+	zch, och := make(chan int), make(chan int)
 	go func() {
 		var t time.Time
 		zeroes := 0
