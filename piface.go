@@ -50,13 +50,12 @@ func main() {
 	go SwitchFunc(0, reader.Green, reader.Buzz)()
 	go SwitchFunc(1, reader.Red, reader.Buzz)()
 
-	// count := 0
-	var number int64
-	for t := time.Now(); time.Now().Sub(t) <= time.Second; {
+	count := 0
+	for t := time.Now(); time.Now().Sub(t) <= time.Microsecond*50; {
 		reader.D0.Value()
-		number = number<<1 | 1
+		reader.D1.Value()
 	}
-	fmt.Printf("%b\n", number)
+	fmt.Printf("%d\n", count)
 
 	select {}
 }
