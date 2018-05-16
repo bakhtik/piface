@@ -30,7 +30,7 @@ func main() {
 	// zero := pfd.InputPins[0]
 	// one := pfd.InputPins[1]
 
-	var reader1 chan int
+	reader1 := make(chan int)
 	go ReadD0(reader1)
 	go ReadD1(reader1)
 	t := time.Now()
