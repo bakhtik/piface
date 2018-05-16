@@ -47,45 +47,22 @@ func init() {
 }
 
 func main() {
-	go SwitchFunc(0, reader.Buzz)()
-	go SwitchFunc(1, reader.Green)()
-	go SwitchFunc(2, reader.Red)()
+	go SwitchFunc(0, reader.Green, reader.Buzz)()
+	go SwitchFunc(1, reader.Green, reader.Buzz)()
 
 	select {}
 }
 
-func switch1() {
-	var prev, cur byte
-	prev = 1
-	for {
-		cur = pfd.Switches[0].Value()
-		if prev != cur {
-			reader.Buzz.Toggle()
-		}
-		prev = cur
-	}
-}
-
-func switch2() {
-	var prev, cur byte
-	prev = 1
-	for {
-		cur = pfd.Switches[0].Value()
-		if prev != cur {
-			reader.Green.Toggle()
-		}
-		prev = cur
-	}
-}
-
-func SwitchFunc(swithIndex int, device Toggler) func() {
+func SwitchFunc(swithIndex int, devices ...Toggler) func() {
 	return func() {
 		var prev, cur byte
 		prev = 1
 		for {
 			cur = pfd.Switches[swithIndex].Value()
 			if prev != cur {
-				device.Toggle()
+				for _, device := range devices {
+					device.Toggle()
+				}
 			}
 			prev = cur
 		}
