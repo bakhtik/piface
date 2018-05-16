@@ -76,40 +76,47 @@ func main() {
 	// 	}
 
 	// }
-	zch, och := make(chan int), make(chan int)
-	go func() {
-		var t time.Time
-		zeroes := 0
-		for {
-			if reader.D0.Value() == 1 {
-				t = time.Now()
-				zeroes++
-			}
-			if zeroes > 0 && time.Now().Sub(t) > packetGap {
-				zch <- zeroes
-				zeroes = 0
-			}
-		}
-	}()
-	go func() {
-		var t time.Time
-		ones := 0
-		for {
-			if reader.D1.Value() == 1 {
-				t = time.Now()
-				ones++
-			}
-			if ones > 0 && time.Now().Sub(t) > packetGap {
-				och <- ones
-				ones = 0
-			}
-		}
-	}()
+	// zch, och := make(chan int), make(chan int)
+	// go func() {
+	// 	var t time.Time
+	// 	zeroes := 0
+	// 	for {
+	// 		if reader.D0.Value() == 1 {
+	// 			t = time.Now()
+	// 			zeroes++
+	// 		}
+	// 		if zeroes > 0 && time.Now().Sub(t) > packetGap {
+	// 			zch <- zeroes
+	// 			zeroes = 0
+	// 		}
+	// 	}
+	// }()
+	// go func() {
+	// 	var t time.Time
+	// 	ones := 0
+	// 	for {
+	// 		if reader.D1.Value() == 1 {
+	// 			t = time.Now()
+	// 			ones++
+	// 		}
+	// 		if ones > 0 && time.Now().Sub(t) > packetGap {
+	// 			och <- ones
+	// 			ones = 0
+	// 		}
+	// 	}
+	// }()
 
+	count := 0
+	t := time.Now()
 	for {
-		zeroes := <-zch
-		ones := <-och
-		fmt.Printf("0: %d, 1: %d, total: %d\n", zeroes, ones, zeroes+ones)
+		if reader.D0.Value() == 1 || reader.D1.Value() == 1 {
+			t = time.Now()
+			count++
+		}
+		if count > 0 && time.Now().Sub(t) > time.Millisecond*100 {
+			fmt.Println(count)
+			count = 0
+		}
 	}
 
 }
