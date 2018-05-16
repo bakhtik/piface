@@ -11,7 +11,7 @@ import (
 
 var pfd *piface.PiFaceDigital
 
-const packetGap = time.Millisecond * 500
+const packetGap = time.Millisecond * 50
 
 func init() {
 	// creates a new pifacedigital instance
