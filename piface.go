@@ -48,7 +48,7 @@ func init() {
 }
 
 func main() {
-	digit := make(chan byte, 35)
+	digit := make(chan byte, 100)
 	go ReadD0(digit)
 	go ReadD1(digit)
 	for d := range digit {
