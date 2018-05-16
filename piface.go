@@ -63,9 +63,11 @@ func main() {
 		default:
 			if time.Now().Sub(t) > packetGap {
 				card.mu.Lock()
-				fmt.Printf("%b, %[1]x, (%d)\n", card.Number, card.count)
-				card.Number = 0
-				card.count = 0
+				if card.count > 0 {
+					fmt.Printf("%b, %[1]x, (%d)\n", card.Number, card.count)
+					card.Number = 0
+					card.count = 0
+				}
 				card.mu.Unlock()
 			}
 		}
