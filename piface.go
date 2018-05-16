@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 	"time"
 
 	"github.com/luismesas/goPi/MCP23S17"
@@ -10,11 +9,14 @@ import (
 	"github.com/luismesas/goPi/spi"
 )
 
-func main() {
+var pfd *piface.PiFaceDigital
 
+func init() {
 	// creates a new pifacedigital instance
-	pfd := piface.NewPiFaceDigital(spi.DEFAULT_HARDWARE_ADDR, spi.DEFAULT_BUS, spi.DEFAULT_CHIP)
+	pfd = piface.NewPiFaceDigital(spi.DEFAULT_HARDWARE_ADDR, spi.DEFAULT_BUS, spi.DEFAULT_CHIP)
+}
 
+func main() {
 	// initializes pifacedigital board
 	err := pfd.InitBoard()
 	if err != nil {
@@ -25,39 +27,67 @@ func main() {
 	// buzz := pfd.OutputPins[2]
 	// green := pfd.OutputPins[3]
 	// red := pfd.OutputPins[4]
-	zero := pfd.InputPins[0]
-	one := pfd.InputPins[1]
+	// zero := pfd.InputPins[0]
+	// one := pfd.InputPins[1]
 
+	var reader1 chan int
+	go ReadD0(reader1)
+	go ReadD1(reader1)
+	t := time.Now()
 	for {
-		switch {
-		case zero.Value() == 1:
-			readCard(pfd, 0)
-		case one.Value() == 1:
-			readCard(pfd, 1)
+		if time.Now().Sub(t) > time.Millisecond*100 {
+			fmt.Println()
+			go blinkGreen()
 		}
+		t = time.Now()
+		fmt.Print(<-reader1)
 	}
-
 }
 
-func readCard(pfd *piface.PiFaceDigital, firstDigit int) {
-	cardNumber := strconv.Itoa(firstDigit)
-	u, t := time.Now(), time.Now()
-	for t.Sub(u) < time.Millisecond*50 {
-		u = t
-		time.Sleep(time.Microsecond * 10)
-		switch {
-		case pfd.InputPins[0].Value() == 1:
-			cardNumber += "0"
-			t = time.Now()
-		case pfd.InputPins[1].Value() == 1:
-			cardNumber += "1"
-			t = time.Now()
+func ReadD0(reader chan int) {
+	D0 := pfd.InputPins[0]
+	for {
+		if D0.Value() == 1 {
+			reader <- 0
 		}
 	}
-	fmt.Println(cardNumber)
-	fmt.Println()
-	time.Sleep(time.Millisecond * 100)
 }
+
+func ReadD1(reader chan int) {
+	D1 := pfd.InputPins[1]
+	for {
+		if D1.Value() == 1 {
+			reader <- 1
+		}
+	}
+}
+
+func blinkGreen() {
+	green := pfd.OutputPins[3]
+	green.Toggle()
+	time.Sleep(time.Millisecond * 500)
+	green.Toggle()
+}
+
+// func readCard(pfd *piface.PiFaceDigital, firstDigit int) {
+// 	cardNumber := strconv.Itoa(firstDigit)
+// 	u, t := time.Now(), time.Now()
+// 	for t.Sub(u) < time.Millisecond*50 {
+// 		u = t
+// 		time.Sleep(time.Microsecond * 10)
+// 		switch {
+// 		case pfd.InputPins[0].Value() == 1:
+// 			cardNumber += "0"
+// 			t = time.Now()
+// 		case pfd.InputPins[1].Value() == 1:
+// 			cardNumber += "1"
+// 			t = time.Now()
+// 		}
+// 	}
+// 	fmt.Println(cardNumber)
+// 	fmt.Println()
+// 	time.Sleep(time.Millisecond * 100)
+// }
 
 func blink(green, red *MCP23S17.MCP23S17RegisterBit) {
 	// blink time!!
