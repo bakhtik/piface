@@ -49,6 +49,7 @@ func main() {
 
 func switch1() {
 	var prev, cur byte
+	prev = 1
 	for {
 		cur = pfd.Switches[0].Value()
 		if prev != cur {
