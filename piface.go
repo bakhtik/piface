@@ -38,7 +38,7 @@ func main() {
 	t := time.Now()
 	for {
 		digit := <-reader1
-		if count > 1 && time.Now().Sub(t) > time.Millisecond*100 {
+		if count > 1 && time.Now().Sub(t) > time.Second {
 			cardCh <- card
 			card, count = 0, 0
 		}
