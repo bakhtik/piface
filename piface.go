@@ -69,7 +69,7 @@ func ReadD0(digit chan<- byte) {
 func ReadD1(digit chan<- byte) {
 	var prev, cur byte
 	for {
-		if cur = reader.D0.Value(); prev < cur {
+		if cur = reader.D1.Value(); prev < cur {
 			digit <- 0
 		}
 		prev = cur
