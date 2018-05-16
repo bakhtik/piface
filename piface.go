@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/luismesas/goPi/MCP23S17"
@@ -19,7 +20,8 @@ type Reader struct {
 
 type Card struct {
 	Number int64
-	Count  int
+	mu     sync.Mutex
+	count  int
 }
 
 var (
@@ -48,26 +50,50 @@ func init() {
 }
 
 func main() {
-	digit := make(chan byte, 37)
-	go ReadD0(digit)
-	go ReadD1(digit)
-	for d := range digit {
-		fmt.Print(d)
-	}
-}
+	event := make(chan struct{})
+	card := &Card{}
+	go ReadD0(card, event)
+	go ReadD1(card, event)
 
-func ReadD0(digit chan<- byte) {
+	t := time.Now()
 	for {
-		if reader.D0.Value() != 0x00 {
-			digit <- 0
+		select {
+		case <-event:
+			t = time.Now()
+		default:
+			if time.Now().Sub(t) > packetGap {
+				card.mu.Lock()
+				fmt.Printf("%b, %[1]x, (%d)\n", card.Number, card.count)
+				card.Number = 0
+				card.count = 0
+				card.mu.Unlock()
+			}
 		}
 	}
 }
 
-func ReadD1(digit chan<- byte) {
+func ReadD0(card *Card, event chan<- struct{}) {
+	var prev, cur byte
 	for {
-		if reader.D1.Value() != 0x00 {
-			digit <- 1
+		if cur = reader.D0.Value(); prev < cur {
+			card.mu.Lock()
+			card.Number = card.Number << 1
+			card.count++
+			card.mu.Unlock()
+			event <- struct{}{}
+		}
+	}
+}
+
+func ReadD1(card *Card, event chan<- struct{}) {
+	var prev, cur byte
+	for {
+		if cur = reader.D1.Value(); prev < cur {
+			card.mu.Lock()
+			card.Number = card.Number<<1 | 1
+			card.count++
+			card.mu.Unlock()
+			event <- struct{}{}
 		}
 	}
 }
