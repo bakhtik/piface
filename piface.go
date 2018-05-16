@@ -49,39 +49,47 @@ func init() {
 
 func main() {
 	// card := Card{}
-	readerCh := make(chan int)
+	readerCh := make(chan int, 35)
+	event := make(chan struct{})
 	// cardCh := make(chan Card)
 	// go reportCard(cardCh)
-	go ReadD0(readerCh)
-	go ReadD1(readerCh)
+	go ReadD0(readerCh, event)
+	go ReadD1(readerCh, event)
 	t := time.Now()
+	count := 0
 	for {
 		select {
-		case digit := <-readerCh:
+		case <-event:
+			count++
 			t = time.Now()
-			go fmt.Print(digit)
 		default:
-			if time.Now().Sub(t) > packetGap {
-				fmt.Println()
-				t = time.Now()
+			if count > 0 && time.Now().Sub(t) > packetGap {
+				for digit := range readerCh {
+					fmt.Print(digit)
+					fmt.Println()
+				}
+				count = 0
 			}
 		}
 
 	}
 }
 
-func ReadD0(readerCh chan int) {
+func ReadD0(readerCh chan int, event chan struct{}) {
 	for {
 		if reader.D0.Value() == 1 {
 			readerCh <- 0
+			event <- struct{}{}
+
 		}
 	}
 }
 
-func ReadD1(readerCh chan int) {
+func ReadD1(readerCh chan int, event chan struct{}) {
 	for {
 		if reader.D1.Value() == 1 {
 			readerCh <- 1
+			event <- struct{}{}
 		}
 	}
 }
