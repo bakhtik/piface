@@ -107,9 +107,9 @@ func main() {
 	}()
 
 	for {
-		zeros := <-zch
+		zeroes := <-zch
 		ones := <-och
-		fmt.Printf("0: %d, 1: %d\n", zeros, ones)
+		fmt.Printf("0: %d, 1: %d, total: %d\n", zeroes, ones, zeroes+ones)
 	}
 
 }
