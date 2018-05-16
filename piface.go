@@ -33,14 +33,12 @@ func main() {
 	reader1 := make(chan int)
 	go ReadD0(reader1)
 	go ReadD1(reader1)
-	t := time.Now()
+	// card, count := 0, 0
 	for {
-		if time.Now().Sub(t) > time.Millisecond*100 {
-			fmt.Println()
-			go blinkGreen()
-		}
-		t = time.Now()
 		fmt.Print(<-reader1)
+
+		// count++
+		// card = card<<1 | digit
 	}
 }
 
