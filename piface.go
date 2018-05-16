@@ -17,6 +17,10 @@ type Reader struct {
 	D1    *MCP23S17.MCP23S17RegisterBitNeg
 }
 
+type Toggler interface {
+	Toggle()
+}
+
 var (
 	pfd    *piface.PiFaceDigital
 	reader Reader
@@ -43,7 +47,10 @@ func init() {
 }
 
 func main() {
-	go switch1()
+	go SwitchFunc(0, reader.Buzz)()
+	go SwitchFunc(1, reader.Green)()
+	go SwitchFunc(2, reader.Red)()
+
 	select {}
 }
 
@@ -56,5 +63,31 @@ func switch1() {
 			reader.Buzz.Toggle()
 		}
 		prev = cur
+	}
+}
+
+func switch2() {
+	var prev, cur byte
+	prev = 1
+	for {
+		cur = pfd.Switches[0].Value()
+		if prev != cur {
+			reader.Green.Toggle()
+		}
+		prev = cur
+	}
+}
+
+func SwitchFunc(swithIndex int, device Toggler) func() {
+	return func() {
+		var prev, cur byte
+		prev = 1
+		for {
+			cur = pfd.Switches[swithIndex].Value()
+			if prev != cur {
+				device.Toggle()
+			}
+			prev = cur
+		}
 	}
 }
