@@ -59,7 +59,7 @@ func main() {
 		select {
 		case digit := <-readerCh:
 			t = time.Now()
-			fmt.Print(digit)
+			go fmt.Print(digit)
 		default:
 			if time.Now().Sub(t) > packetGap {
 				fmt.Println()
