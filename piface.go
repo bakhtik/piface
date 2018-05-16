@@ -68,7 +68,7 @@ func ReadD1(reader chan int) {
 
 func reportCard(card chan int) {
 	for {
-		fmt.Printf("%b, %h[1]\n", <-card)
+		fmt.Printf("%b, %[1]x\n", <-card)
 		blinkGreen()
 	}
 }
