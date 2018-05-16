@@ -57,22 +57,18 @@ func main() {
 }
 
 func ReadD0(digit chan<- byte) {
-	var prev, cur byte
 	for {
-		if cur = reader.D0.Value(); prev < cur {
+		if reader.D0.Value() != 0x00 {
 			digit <- 0
 		}
-		prev = cur
 	}
 }
 
 func ReadD1(digit chan<- byte) {
-	var prev, cur byte
 	for {
-		if cur = reader.D1.Value(); prev < cur {
+		if reader.D1.Value() != 0x00 {
 			digit <- 1
 		}
-		prev = cur
 	}
 }
 
