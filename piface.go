@@ -50,8 +50,8 @@ func init() {
 func main() {
 	// card := Card{}
 	readerCh := make(chan int)
-	cardCh := make(chan Card)
-	go reportCard(cardCh)
+	// cardCh := make(chan Card)
+	// go reportCard(cardCh)
 	go ReadD0(readerCh)
 	go ReadD1(readerCh)
 	t := time.Now()
