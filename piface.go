@@ -56,7 +56,7 @@ func main() {
 		reader.D0.Value()
 		number = number<<1 | 1
 	}
-	fmt.Printf("%d Hz\n", number)
+	fmt.Printf("%d\n", number)
 
 	select {}
 }
