@@ -48,7 +48,7 @@ func init() {
 }
 
 func main() {
-	digit := make(chan byte, 100)
+	digit := make(chan byte)
 	go ReadD0(digit)
 	go ReadD1(digit)
 	for d := range digit {
@@ -57,7 +57,7 @@ func main() {
 }
 
 func ReadD0(digit chan<- byte) {
-	var prev, cur byte
+	var prev, cur byt
 	for {
 		if cur = reader.D0.Value(); prev < cur {
 			digit <- 0
