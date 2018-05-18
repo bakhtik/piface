@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/luismesas/goPi/MCP23S17"
-	"github.com/luismesas/goPi/piface"
-	"github.com/luismesas/goPi/spi"
+	"github.com/bakhtik/goPi/MCP23S17"
+	"github.com/bakhtik/goPi/piface"
+	"github.com/bakhtik/goPi/spi"
 )
 
 type Reader struct {
@@ -26,7 +26,7 @@ var (
 	reader Reader
 )
 
-const packetGap = time.Millisecond * 500
+const packetGap = time.Millisecond * 50
 
 func init() {
 	// creates a new pifacedigital instance
